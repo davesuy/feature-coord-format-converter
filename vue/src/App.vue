@@ -10,28 +10,42 @@ export default {
       longitude_display: '',
       coordinate: '',
       coordinate_display: '',
-      format_error: false
+      format_error: false,
+      notification: ''
     });
     const submitted = ref(false);
 
     const handleSubmit = () => {
       submitted.value = true;
 
-
       var latitude = formData.value.latitude;
       var longitude = formData.value.longitude;
 
-
-      formData.value.latitude_display =   dd_formula_func(latitude);
-      formData.value.longitude_display =   dd_formula_func(longitude);
 
       if(formData.value.coordinate === "DD") {
 
         formData.value.coordinate_display = "Degrees, Minutes, Seconds (DMS)";
 
-      } else {
+
+        formData.value.latitude_display =   dd_formula_func(latitude);
+        formData.value.longitude_display =   dd_formula_func(longitude);
+
+      } else if(formData.value.coordinate === "DMS") {
+
+        formData.value.latitude_display =   dms_formula_func(latitude);
+        formData.value.longitude_display =  dms_formula_func(longitude);
+
+        if(  formData.value.latitude_display === "" ||  formData.value.longitude_display === "") {
+
+          formData.value.format_error = true;
+
+        }
 
         formData.value.coordinate_display = "Decimal Degrees (DD)";
+
+      } else if(formData.value.coordinate === "") {
+
+        formData.value.notification = "Please select a coordinate.";
 
       }
 
@@ -81,29 +95,46 @@ export default {
 
     };
 
+    function dms_formula_func(input) {
+
+
+       var get_first_val =  input.split("∘");
+
+      let degrees = get_first_val[0];
+
+      var startIndex =  input.indexOf("∘");
+      let endIndex = input.indexOf("′", startIndex + 1);
+
+      if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+        return ''; // Return an empty string if characters are not found or invalid positions
+      }
+
+      var minutes = input.substring(startIndex + 1, endIndex);
+
+      var startIndex2 =  input.indexOf("′");
+      let endIndex2 = input.indexOf("′′", startIndex2 + 1);
+
+      if (startIndex2 === -1 || endIndex2 === -1 || startIndex2 >= endIndex2) {
+        return ''; // Return an empty string if characters are not found or invalid positions
+      }
+
+      var seconds = input.substring(startIndex2 + 1, endIndex2);
+
+      let minutes_divide = minutes / 60;
+      let seconds_divide = seconds / 3600;
+
+
+      return Number(degrees) + Number(minutes_divide) + Number(seconds_divide) + "∘";
+
+    };
+
     onMounted(() => {
 
-       const latitude = "123.4567°";
+      var latitude = "28∘2′55.55′′28";
 
-      dd_formula_func(latitude);
+      dms_formula_func(latitude);
 
-      // const latitude = "123.4567°";
-      // var remove_char_lat =  latitude.replace("°", "");
-      //
-      // var whole_decimal = Math.floor(remove_char_lat);
-      //
-      // var minutes_calc = ((remove_char_lat - whole_decimal) * 60);
-      //
-      // var minutes = Math.floor(minutes_calc);
-      //
-      // var seconds_calc = remove_char_lat - Math.floor(remove_char_lat);
-      // var second_calc_2 = ((seconds_calc * 60 - minutes) * 60);
-      //
-      // var seconds = second_calc_2.toFixed(2);
-      //
-      // const result_DD = whole_decimal+ "°" + minutes + "′" + seconds + "′′";
-      //
-      // console.log(result_DD);
+      //console.log(dms_formula_func(latitude));
 
     });
 
@@ -111,7 +142,8 @@ export default {
       formData,
       submitted,
       handleSubmit,
-      dd_formula_func
+      dd_formula_func,
+      dms_formula_func,
     };
   }
 };
@@ -122,6 +154,9 @@ export default {
 <div class="mt-4">
 
   <h2 class="text-center mb-6 text-white text-3xl">Feature Coordinate Format Converter</h2>
+  <h4 class="text-white mb-2">Follow this formatting guide example to make the conversion work:</h4>
+  <p class="text-white mb-4"><label for=""><strong>DD:</strong></label> 123.4567°</p>
+  <p class="text-white mb-4"><label for=""><strong>DMS:</strong></label> 28∘2′55.55′′</p>
 
   <form class="mx-auto" @submit.prevent="handleSubmit">
     <div class="mb-5">
@@ -135,7 +170,8 @@ export default {
     <div class="mb-5">
 
 
-      <label for="coordinate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
+      <label for="coordinate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a coordinate</label>
+
       <select id="coordinate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="formData.coordinate">
         <option selected>Choose a coordinate</option>
         <option value="DD">Decimal Degrees (DD) </option>
