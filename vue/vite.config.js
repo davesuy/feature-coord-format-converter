@@ -10,10 +10,10 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      input: './src/main.js', // Adjust this path to your entry JavaScript file
       output: {
-        entryFileNames: 'assets/bundle.js', // Output file name
-        dir: 'dist', // Output directory
+        entryFileNames: `assets/bundle.js`,
+        chunkFileNames: `assets/bundle.js`,
+        assetFileNames: `assets/[name].[ext]`
       }
     }
   },

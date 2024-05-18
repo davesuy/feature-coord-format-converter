@@ -17,6 +17,13 @@ class Feature_Coord_Format_Converter_Public {
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/feature-coord-format-converter-public.css', array(), $this->version, 'all' );
 
+        $script_path = plugin_dir_path( dirname( __FILE__ ) ).'vue/dist/assets/index.css';
+        $script_url =  plugin_dir_url( dirname( __FILE__ )).'vue/dist/assets/index.css';
+
+        $version = filemtime($script_path); // Get the file modification time
+
+        wp_enqueue_style( 'fcfc-vue-css',   $script_url, array(),  $version );
+
 	}
 
 	public function enqueue_scripts() {

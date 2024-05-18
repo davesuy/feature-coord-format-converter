@@ -56,6 +56,10 @@ class Feature_Coord_Format_Converter {
 
         $this->loader->add_shortcode( 'display_form_fcfc', $plugin_public, 'display_form_fcfc_func' );
 
+        /**
+         * WP Rest API Integration
+         */
+        $this->loader->add_action( 'rest_api_init',  $plugin_public, 'register_routes' );
 	}
 
 	public function run() {

@@ -151,53 +151,55 @@ export default {
 
 
 <template>
-<div class="mt-4">
 
-  <h2 class="text-center mb-6 text-white text-3xl">Feature Coordinate Format Converter</h2>
-  <h4 class="text-white mb-2">Follow this formatting guide example to make the conversion work:</h4>
-  <p class="text-white mb-4"><label for=""><strong>DD:</strong></label> 123.4567°</p>
-  <p class="text-white mb-4"><label for=""><strong>DMS:</strong></label> 28∘2′55.55′′</p>
+  <div class="mt-4">
 
-  <form class="mx-auto" @submit.prevent="handleSubmit">
-    <div class="mb-5">
-      <label for="latitude" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Latitude</label>
-      <input type="text" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" v-model="formData.latitude" required />
-    </div>
-    <div class="mb-5">
-      <label for="longitude" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Longitude</label>
-      <input type="text" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required v-model="formData.longitude" />
-    </div>
-    <div class="mb-5">
+    <h2 class="text-center mb-6 text-white text-3xl">Feature Coordinate Format Converter</h2>
+    <h4 class="text-white mb-2">Follow this formatting guide example to make the conversion work:</h4>
+    <p class="text-white mb-4"><label for=""><strong>DD:</strong></label> 123.4567°</p>
+    <p class="text-white mb-4"><label for=""><strong>DMS:</strong></label> 28∘2′55.55′′</p>
 
-
-      <label for="coordinate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a coordinate</label>
-
-      <select id="coordinate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="formData.coordinate">
-        <option selected>Choose a coordinate</option>
-        <option value="DD">Decimal Degrees (DD) </option>
-        <option value="DMS">Degrees, Minutes, Seconds (DMS)</option>
-      </select>
+    <form class="mx-auto" @submit.prevent="handleSubmit">
+      <div class="mb-5">
+        <label for="latitude" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Latitude</label>
+        <input type="text" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" v-model="formData.latitude" required />
+      </div>
+      <div class="mb-5">
+        <label for="longitude" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Longitude</label>
+        <input type="text" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required v-model="formData.longitude" />
+      </div>
+      <div class="mb-5">
 
 
-    </div>
+        <label for="coordinate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a coordinate</label>
 
-    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Convert</button>
-  </form>
+        <select id="coordinate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="formData.coordinate">
+          <option selected>Choose a coordinate</option>
+          <option value="DD">Decimal Degrees (DD) </option>
+          <option value="DMS">Degrees, Minutes, Seconds (DMS)</option>
+        </select>
 
-  <div v-if="submitted">
-
-      <div class="my-5 text-white" v-if="formData.format_error === false">
-
-        <p>Latitude: {{ formData.latitude_display }}</p>
-        <p>Longitude: {{ formData.longitude_display }}</p>
-        <p>Coordinate: {{ formData.coordinate_display }}</p>
 
       </div>
 
-      <div class="my-5 text-white" v-if="formData.format_error === true">
-        <p>Format Error! please make sure the format is correct in putting the value.</p>
-      </div>
+      <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Convert</button>
+    </form>
+
+    <div v-if="submitted">
+
+        <div class="my-5 text-white" v-if="formData.format_error === false">
+
+          <p>Latitude: {{ formData.latitude_display }}</p>
+          <p>Longitude: {{ formData.longitude_display }}</p>
+          <p>Coordinate: {{ formData.coordinate_display }}</p>
+
+        </div>
+
+        <div class="my-5 text-white" v-if="formData.format_error === true">
+          <p>Format Error! please make sure the format is correct in putting the value.</p>
+        </div>
+    </div>
+
   </div>
 
-</div>
 </template>
