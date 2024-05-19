@@ -1,5 +1,6 @@
 <script>
 import { ref, onMounted  } from 'vue';
+import axios from 'axios'
 
 export default {
   setup() {
@@ -26,14 +27,16 @@ export default {
 
         formData.value.coordinate_display = "Degrees, Minutes, Seconds (DMS)";
 
+        formData.value.latitude_display =   dms_formula_func(latitude);
+        formData.value.longitude_display =  dms_formula_func(longitude);
 
-        formData.value.latitude_display =   dd_formula_func(latitude);
-        formData.value.longitude_display =   dd_formula_func(longitude);
+
 
       } else if(formData.value.coordinate === "DMS") {
 
-        formData.value.latitude_display =   dms_formula_func(latitude);
-        formData.value.longitude_display =  dms_formula_func(longitude);
+
+        formData.value.latitude_display =   dd_formula_lat_func(latitude);
+        formData.value.longitude_display =   dd_formula_func(longitude);
 
         if(  formData.value.latitude_display === "" ||  formData.value.longitude_display === "") {
 
@@ -51,6 +54,113 @@ export default {
 
 
     //  console.log('Form data:', formData.value.coordinate);
+
+
+      var urlDev = window.location.origin;
+
+      const url =  urlDev + "/wp-json/fcfc/v1/add";
+
+
+
+      const str_lat = formData.value.latitude_display;
+      const str_long = formData.value.longitude_display;
+
+      const lettersToCheck = "NDWE";
+
+      console.log(containsLetters(str_lat, lettersToCheck));
+
+      if(containsLetters(str_lat, lettersToCheck)) {
+
+        var remove_char_lat =  formData.value.latitude_display.replace("W", "");
+        var remove_char_lat =  formData.value.latitude_display.replace("E", "");
+
+        var save_lat = dms_formula_func(remove_char_lat);
+
+      } else {
+
+        var save_lat = formData.value.latitude_display;
+
+      }
+
+      if(containsLetters(str_long, lettersToCheck)) {
+
+        var remove_char_long =  formData.value.longitude_display.replace("N", "");
+        var remove_char_long =  formData.value.longitude_display.replace("S", "");
+
+        var save_long = dms_formula_func(remove_char_long);
+
+      } else {
+
+        var save_long = formData.value.longitude_display;
+
+      }
+      console.log( save_long);
+
+      const params = {
+
+        latitude: save_lat,
+        longitude: save_long,
+        coordinate:  formData.value.coordinate_display
+
+      };
+
+
+      axios
+          .post(url, params)
+          .then((response) => {
+
+            console.log(response.data);
+
+          }).catch((error) => {
+        console.log(error)
+      })
+
+    };
+
+    function containsLetters(str, letters) {
+      const regex = new RegExp(`[${letters}]`, 'i');
+      return regex.test(str);
+    }
+
+
+    function dd_formula_lat_func(input) {
+
+      const latitude = input;
+      var remove_char_lat =  latitude.replace("°", "");
+
+      var whole_decimal = Math.floor(remove_char_lat);
+
+      if (whole_decimal > 0) {
+        var axis = 'W';
+      } else if (whole_decimal < 0) {
+        var axis = 'E';
+      } else {
+        var axis = 'EQ';
+      }
+
+      var minutes_calc = ((remove_char_lat - whole_decimal) * 60);
+
+      var minutes = Math.floor(minutes_calc);
+
+      var seconds_calc = remove_char_lat - Math.floor(remove_char_lat);
+      var second_calc_2 = ((seconds_calc * 60 - minutes) * 60);
+
+      var seconds = second_calc_2.toFixed(2);
+
+      const result_DD = whole_decimal+ "∘" + minutes + "′" + seconds + "′′";
+
+      if(isNaN(whole_decimal) || isNaN(minutes) || isNaN(seconds)) {
+
+        formData.value.format_error = true;
+
+      } else {
+
+        formData.value.format_error = false;
+
+      }
+
+      //console.log(isNaN(whole_decimal));
+      return result_DD + axis;
 
     };
 
@@ -78,7 +188,7 @@ export default {
 
       var seconds = second_calc_2.toFixed(2);
 
-      const result_DD = whole_decimal+ "°" + minutes + "′" + seconds + "′′";
+      const result_DD = whole_decimal+ "∘" + minutes + "′" + seconds + "′′";
 
       if(isNaN(whole_decimal) || isNaN(minutes) || isNaN(seconds)) {
 
@@ -130,11 +240,45 @@ export default {
 
     onMounted(() => {
 
-      var latitude = "28∘2′55.55′′28";
+     // var latitude = "28∘2′55.55′′28";
 
-      dms_formula_func(latitude);
+    //  dms_formula_func(latitude);
 
       //console.log(dms_formula_func(latitude));
+
+
+      if (location.hostname === "localhost" || location.hostname === "127.0.0.1" ) {
+
+        var urlDev = window.location.origin;
+
+      } else if(import.meta.env.PROD == true && location.hostname != "localhost" || location.hostname != "127.0.0.1") {
+
+
+        var urlDev = window.location.origin;
+      }
+      //
+      // var urlDev = window.location.origin;
+      //
+      // const url =  urlDev + "/wp-json/fcfc/v1/add";
+      //
+      // const params = {
+      //
+      //   latitude: formData.value.latitude,
+      //   longitude: formData.value.longitude,
+      //   coordinate:  formData.value.coordinate
+      //
+      // };
+      //
+      //
+      // axios
+      //     .post(url, params)
+      //     .then((response) => {
+      //
+      //       console.log(response.data);
+      //
+      //     }).catch((error) => {
+      //       console.log(error)
+      // })
 
     });
 

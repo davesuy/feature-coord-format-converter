@@ -37,11 +37,62 @@ class Feature_Coord_Format_Converter_Public {
 
         wp_enqueue_script( 'fcfc-vue-js',  $script_url, array('jquery'),   $version , true);
 
+        wp_localize_script( 'fcfc-vue-js', 'frontend_ajax_object',
+            array(
+                'ajaxurl' => admin_url( 'admin-ajax.php' ),
+                'home_domain' => get_bloginfo('url'),
+
+            )
+        );
+
 	}
 
     public function display_form_fcfc_func() {
 
         return '<div id="app-fcfc"></div>';
+
+    }
+
+    public function register_routes() {
+
+        register_rest_route(
+            'fcfc/v1',
+            '/add',
+            [
+                'methods'             => WP_REST_Server::CREATABLE,
+                'callback'            => [ $this, 'add_data' ],
+                'permission_callback' => '__return_true',
+            ]
+        );
+
+
+
+    }
+
+    public function add_data(WP_REST_Request $request) {
+        $body = $request->get_body();
+        $body_decode = json_decode($body);
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'coords';
+
+        // Prepare sanitized data
+        $data = array(
+            'lat' => $body_decode->latitude,
+            'lng' => $body_decode->longitude,
+            'format_type' => $body_decode->coordinate,
+        );
+
+
+        $result = $wpdb->insert($table_name, $data);
+
+        if ($result === false) {
+            // Handle error if insertion fails
+            echo "Error inserting data: " . $wpdb->last_error;
+        } else {
+            // Data inserted successfully
+            echo "Data inserted successfully!";
+        }
 
     }
 

@@ -9,12 +9,12 @@ class Feature_Coord_Format_Converter_Activator {
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE " . $coords . "(
-         ID         int         NOT NULL,   
+        id INT NOT NULL AUTO_INCREMENT,
          notes      text,  
          lat        text,
          lng        text,
          format_type    text,   
-         PRIMARY KEY (ID)
+         PRIMARY KEY (id)
         ) $charset_collate; ";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
